@@ -106,6 +106,7 @@ class QueryBuilder extends Object
             $this->buildOrderBy($query->orderBy),
             $this->buildLimit($query->limit, $query->offset),
             $this->buildOption($query->options, $params),
+            $this->buildFacets($query->facets),
         ];
 
         return [implode($this->separator, array_filter($clauses)), $params];
@@ -1018,6 +1019,14 @@ class QueryBuilder extends Object
         }
 
         return 'WITHIN GROUP ORDER BY ' . implode(', ', $orders);
+    }
+
+    public function buildFacets($facets)
+    {
+        if (empty($facets)) {
+            return '';
+        }
+        return 'FACET ' . join(' FACET ', $facets);
     }
 
     /**

@@ -90,6 +90,10 @@ class Query extends \yii\db\Query
      * @var array query options for the call snippet.
      */
     public $snippetOptions;
+    /**
+     * @var array facet options
+     */
+    public $facets;
 
     /**
      * @var Connection the Sphinx connection used to generate the SQL statements.
@@ -226,6 +230,36 @@ class Query extends \yii\db\Query
     public function options($options)
     {
         $this->options = $options;
+
+        return $this;
+    }
+
+    /**
+     * Sets the facets options.
+     * @param array $facets array of facet strings
+     * @return static the query object itself
+     * @see addFacet()
+     */
+    public function facets($facets)
+    {
+        $this->facets = $facets;
+
+        return $this;
+    }
+
+    /**
+     * Adds facet.
+     * @param string $facet facet options string
+     * @return static the query object itself
+     * @see facets()
+     */
+    public function addFacet($facet)
+    {
+        if (is_array($this->facets)) {
+            $this->facets[] = $facet;
+        } else {
+            $this->facets = [$facet];
+        }
 
         return $this;
     }

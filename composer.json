@@ -23,7 +23,7 @@
         "ext-pdo_mysql": "*"
     },
     "autoload": {
-        "psr-4": { "yii\\sphinx\\": "" }
+        "psr-4": { "pahanini\\sphinx\\": "" }
     },
     "extra": {
         "branch-alias": {
