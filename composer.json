@@ -1,5 +1,5 @@
 {
-    "name": "yiisoft/yii2-sphinx",
+    "name": "pahanini/yii2-sphinx",
     "description": "Sphinx full text search engine extension for the Yii framework",
     "keywords": ["yii2", "sphinx", "active-record", "search", "fulltext"],
     "type": "yii2-extension",
@@ -23,7 +23,7 @@
         "ext-pdo_mysql": "*"
     },
     "autoload": {
-        "psr-4": { "pahanini\\sphinx\\": "" }
+        "psr-4": { "yii2\\sphinx\\": "" }
     },
     "extra": {
         "branch-alias": {
