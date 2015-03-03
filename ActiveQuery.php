@@ -152,28 +152,11 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      * Executes query and returns all results as an array.
      * @param Connection $db the DB connection used to create the DB command.
      * If null, the DB connection returned by [[modelClass]] will be used.
-     * @return array the query results. If the query results in nothing, an empty array will be returned.
+     * @return array|ActiveRecord[] the query results. If the query results in nothing, an empty array will be returned.
      */
     public function all($db = null)
     {
-        $command = $this->createCommand($db);
-        $rows = $command->queryAll();
-        if (!empty($rows)) {
-            $models = $this->createModels($rows);
-            if (!empty($this->with)) {
-                $this->findWith($this->with, $models);
-            }
-            $models = $this->fillUpSnippets($models);
-            if (!$this->asArray) {
-                foreach ($models as $model) {
-                    $model->afterFind();
-                }
-            }
-
-            return $models;
-        } else {
-            return [];
-        }
+        return parent::all($db);
     }
 
     /**
@@ -186,33 +169,39 @@ class ActiveQuery extends Query implements ActiveQueryInterface
      */
     public function one($db = null)
     {
-        $command = $this->createCommand($db);
-        $row = $command->queryOne();
+        $row = parent::one($db);
         if ($row !== false) {
-            if ($this->asArray) {
-                $model = $row;
-            } else {
-                /* @var $class ActiveRecord */
-                $class = $this->modelClass;
-                $model = $class::instantiate($row);
-                $class = get_class($model);
-                $class::populateRecord($model, $row);
-            }
-            if (!empty($this->with)) {
-                $models = [$model];
-                $this->findWith($this->with, $models);
-                $model = $models[0];
-            }
-            list ($model) = $this->fillUpSnippets([$model]);
-            if (!$this->asArray) {
-                $model->afterFind();
-            }
-
-            return $model;
+            $models = $this->populate([$row]);
+            return reset($models) ?: null;
         } else {
             return null;
         }
     }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function populate($rows)
+    {
+        if (empty($rows)) {
+            return [];
+        }
+
+        $models = $this->createModels($rows);
+        if (!empty($this->with)) {
+            $this->findWith($this->with, $models);
+        }
+        $models = $this->fillUpSnippets($models);
+        if (!$this->asArray) {
+            foreach ($models as $model) {
+                $model->afterFind();
+            }
+        }
+
+        return $models;
+    }
+
 
     /**
      * Creates a DB command that can be used to execute this query.
